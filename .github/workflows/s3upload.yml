@@ -1,0 +1,21 @@
+name: 's3 upload test'
+run-name: ${{ github.actor }} is learning upload to s3
+on: workflow_dispatch
+jobs:
+  generate-angular-build:
+    runs-on: macos-12
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: 'src'
+      - run: ls
+      - run: tar -zcvf src.tar.gz src
+      - run: ls
+      - uses: keithweaver/aws-s3-github-action@v1.0.0
+        with:
+          command: cp
+          source: ./src.tar.gz
+          destination: s3://vm-chat-builds/src.tar.gz
+          aws_access_key_id: ${{ secrets.ORG_AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.ORG_AWS_SECRET_ACCESS_KEY }}
+          aws_region: us-east-1
